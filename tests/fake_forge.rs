@@ -411,7 +411,12 @@ async fn ci_wait_is_a_task_for_clients_that_support_tasks() {
         .peer_info()
         .and_then(|info| info.instructions.clone())
         .unwrap_or_default();
-    let command = format!("\"{}\" wait --dir", env!("CARGO_BIN_EXE_gitforge-mcp"));
+    let executable = env!("CARGO_BIN_EXE_gitforge-mcp");
+    let command = if cfg!(windows) {
+        format!("& '{}' wait --dir", executable.replace('\'', "''"))
+    } else {
+        format!("\"{executable}\" wait --dir")
+    };
     assert!(instructions.contains(&command), "{instructions}");
     let ci_wait = common::tools(&plain)
         .await

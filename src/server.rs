@@ -163,25 +163,30 @@ fn background_wait(dir: &std::path::Path) -> String {
         .map(|p| p.display().to_string())
         .unwrap_or_else(|| "gitforge-mcp".into());
     let dir = std::path::absolute(dir).unwrap_or_else(|_| dir.to_path_buf());
-    let (prefix, quote): (&str, fn(&str) -> String) = if cfg!(windows) {
-        ("& ", powershell_quote)
-    } else {
-        ("", shell_quote)
-    };
-    format!(
-        "{prefix}{} wait --dir {}",
-        quote(&exe),
-        quote(&dir.display().to_string())
-    )
+    #[cfg(windows)]
+    let command = format!(
+        "& {} wait --dir {}",
+        powershell_quote(&exe),
+        powershell_quote(&dir.display().to_string())
+    );
+    #[cfg(not(windows))]
+    let command = format!(
+        "{} wait --dir {}",
+        shell_quote(&exe),
+        shell_quote(&dir.display().to_string())
+    );
+    command
 }
 
 /// A literal PowerShell argument. The call operator invokes a quoted executable.
+#[cfg(any(windows, test))]
 fn powershell_quote(s: &str) -> String {
     format!("'{}'", s.replace('\'', "''"))
 }
 
 /// `s` in double quotes for a POSIX shell, with the characters that are
 /// still special there escaped.
+#[cfg(any(not(windows), test))]
 fn shell_quote(s: &str) -> String {
     let mut quoted = String::with_capacity(s.len() + 2);
     quoted.push('"');
