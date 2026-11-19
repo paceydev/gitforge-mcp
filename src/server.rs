@@ -163,11 +163,21 @@ fn background_wait(dir: &std::path::Path) -> String {
         .map(|p| p.display().to_string())
         .unwrap_or_else(|| "gitforge-mcp".into());
     let dir = std::path::absolute(dir).unwrap_or_else(|_| dir.to_path_buf());
+    let (prefix, quote): (&str, fn(&str) -> String) = if cfg!(windows) {
+        ("& ", powershell_quote)
+    } else {
+        ("", shell_quote)
+    };
     format!(
-        "{} wait --dir {}",
-        shell_quote(&exe),
-        shell_quote(&dir.display().to_string())
+        "{prefix}{} wait --dir {}",
+        quote(&exe),
+        quote(&dir.display().to_string())
     )
+}
+
+/// A literal PowerShell argument. The call operator invokes a quoted executable.
+fn powershell_quote(s: &str) -> String {
+    format!("'{}'", s.replace('\'', "''"))
 }
 
 /// `s` in double quotes for a POSIX shell, with the characters that are
@@ -889,9 +899,21 @@ mod tests {
             shell_quote(r#"/srv/a"b\c$HOME`x`"#),
             r#""/srv/a\"b\\c\$HOME\`x\`""#
         );
-        let command = background_wait(std::path::Path::new("/srv/my repo"));
+        assert_eq!(
+            powershell_quote(r"C:\my repo\O'Brien`$"),
+            r"'C:\my repo\O''Brien`$'"
+        );
+        let dir = std::env::temp_dir().join("my repo");
+        let command = background_wait(&dir);
+        let absolute = std::path::absolute(&dir).unwrap();
+        let expected = if cfg!(windows) {
+            assert!(command.starts_with("& '"), "{command}");
+            powershell_quote(&absolute.display().to_string())
+        } else {
+            shell_quote(&absolute.display().to_string())
+        };
         assert!(
-            command.ends_with(r#" wait --dir "/srv/my repo""#),
+            command.ends_with(&format!(" wait --dir {expected}")),
             "{command}"
         );
     }

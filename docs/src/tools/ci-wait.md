@@ -30,3 +30,5 @@ long wait blocks the agent. There are two ways round that:
   desktop app, Codex) can run [`gitforge-mcp wait`](../guide/command-line.md#gitforge-mcp-wait)
   instead. The server's instructions tell the agent so, with the binary's
   full path.
+
+The generated background command uses PowerShell on Windows and POSIX shell quoting on macOS and Linux.

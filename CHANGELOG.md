@@ -213,6 +213,8 @@ First public release, with native archives for macOS, Linux and Windows on x64 a
 
 ### Fixed
 
+- Windows background-wait instructions use PowerShell invocation and literal quoting. Windows releases statically link the C runtime.
+- Upgrade the MCP SDK to 3.9.0 to address RUSTSEC-2026-0462.
 - On Gitea, jobs waiting for a runner were read from the oldest 50 jobs of
   the repository, so a repository with a longer history reported none.
   They are now read by status.
