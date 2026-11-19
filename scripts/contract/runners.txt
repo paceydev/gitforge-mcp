@@ -1,0 +1,6 @@
+# The Actions runner each forge kind runs its contract workflow on: name,
+# version, and the SHA-256 of the linux-amd64 and linux-arm64 .xz release
+# binaries. Both run jobs directly on the host (label `contract:host`), so
+# no Docker is needed.
+gitea-runner    5.2.4   41235aa4b3bf6df5f934038129c5dce08b863ca6a90196a6001b337c864cf6d1  62065c2c6332b4a07eb391a007502e61515b5215ef4e4410e3c0879e480173c1
+forgejo-runner  13.2.0  c12c4f5ad6a2b37fb40110faecf0540077d71022f86c7ee2100772157509d89a  cf9e9ccaba451f852ff219b02646a89677826cedcf71fdd4581cf0b4e7da90ba

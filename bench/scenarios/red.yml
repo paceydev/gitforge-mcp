@@ -1,0 +1,20 @@
+# The failure's cause is buried: 400 lines of output before it, and teardown
+# output after it, as in a real test run. The code is computed so the literal
+# error text appears only in the output, not in the step's script, which the
+# runner echoes at the top of the log.
+name: ci
+on: [push]
+jobs:
+  lint:
+    runs-on: contract
+    steps:
+      - run: echo "lint ok"
+  test:
+    runs-on: contract
+    steps:
+      - run: |
+          for i in $(seq 1 400); do echo "test_case_$i ... ok"; done
+          code=$((4400 + 71))
+          echo "ERROR E-WIDGET-$code: widget count mismatch: expected 3, got 4"
+          for i in $(seq 1 25); do echo "teardown: released fixture $i"; done
+          exit 1

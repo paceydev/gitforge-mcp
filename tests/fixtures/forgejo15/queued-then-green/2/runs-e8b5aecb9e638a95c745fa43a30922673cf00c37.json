@@ -1,0 +1,15 @@
+{
+ "workflow_runs": [
+  {
+   "id": 388,
+   "title": "Change for run 20",
+   "workflow_id": "ci.yml",
+   "index_in_repo": 20,
+   "prettyref": "main",
+   "commit_sha": "e8b5aecb9e638a95c745fa43a30922673cf00c37",
+   "event": "push",
+   "status": "success"
+  }
+ ],
+ "total_count": 1
+}

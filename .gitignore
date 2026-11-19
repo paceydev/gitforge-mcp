@@ -1,0 +1,7 @@
+/target
+*.tmp
+.DS_Store
+/.claude/
+__pycache__/
+/docs/book/
+/dist/

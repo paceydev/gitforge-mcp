@@ -1,0 +1,149 @@
+{
+  "version": 2,
+  "quality_score": 0.8790096969267477,
+  "iosp_score": 0.9720873786407767,
+  "violations": 23,
+  "total": 1233,
+  "complexity_warnings": 8,
+  "magic_number_warnings": 0,
+  "nesting_depth_warnings": 0,
+  "function_length_warnings": 18,
+  "unsafe_warnings": 0,
+  "error_handling_warnings": 1,
+  "duplicate_groups": 0,
+  "dead_code_warnings": 1,
+  "dead_type_warnings": 0,
+  "fragment_groups": 16,
+  "boilerplate_warnings": 13,
+  "srp_struct_warnings": 1,
+  "srp_module_warnings": 20,
+  "wildcard_import_warnings": 0,
+  "sdp_violations": 2,
+  "coupling_warnings": 1,
+  "coupling_cycles": 0,
+  "tq_no_assertion_warnings": 0,
+  "tq_no_sut_warnings": 0,
+  "tq_untested_warnings": 0,
+  "tq_uncovered_warnings": 0,
+  "tq_untested_logic_warnings": 0,
+  "structural_srp_warnings": 0,
+  "structural_coupling_warnings": 0,
+  "total_findings": 110,
+  "violation_details": [
+    {
+      "name": "resolve",
+      "file": "src/auth.rs",
+      "line": 108
+    },
+    {
+      "name": "from_gh",
+      "file": "src/auth.rs",
+      "line": 242
+    },
+    {
+      "name": "gh_auth_token",
+      "file": "src/auth.rs",
+      "line": 266
+    },
+    {
+      "name": "git_credential_fill",
+      "file": "src/auth.rs",
+      "line": 293
+    },
+    {
+      "name": "Config::load",
+      "file": "src/config.rs",
+      "line": 153
+    },
+    {
+      "name": "probe",
+      "file": "src/context.rs",
+      "line": 110
+    },
+    {
+      "name": "Jenkins::start",
+      "file": "src/external/jenkins.rs",
+      "line": 827
+    },
+    {
+      "name": "Jenkins::follow",
+      "file": "src/external/jenkins.rs",
+      "line": 878
+    },
+    {
+      "name": "Provider::cancel",
+      "file": "src/external/mod.rs",
+      "line": 534
+    },
+    {
+      "name": "Provider::rerun",
+      "file": "src/external/mod.rs",
+      "line": 585
+    },
+    {
+      "name": "GiteaFamily::settings_apply",
+      "file": "src/forge/gitea/settings.rs",
+      "line": 73
+    },
+    {
+      "name": "GiteaFamily::ci_dispatch",
+      "file": "src/forge/gitea/write.rs",
+      "line": 164
+    },
+    {
+      "name": "GiteaFamily::detect",
+      "file": "src/forge/gitea.rs",
+      "line": 39
+    },
+    {
+      "name": "GiteaFamily::connect_as",
+      "file": "src/forge/gitea.rs",
+      "line": 87
+    },
+    {
+      "name": "Github::settings_apply",
+      "file": "src/forge/github/settings.rs",
+      "line": 103
+    },
+    {
+      "name": "main",
+      "file": "src/main.rs",
+      "line": 131
+    },
+    {
+      "name": "auth_command",
+      "file": "src/main.rs",
+      "line": 343
+    },
+    {
+      "name": "git",
+      "file": "src/remote.rs",
+      "line": 183
+    },
+    {
+      "name": "secrets_in",
+      "file": "src/repo_settings.rs",
+      "line": 455
+    },
+    {
+      "name": "strip_credentials",
+      "file": "src/settings/mod.rs",
+      "line": 145
+    },
+    {
+      "name": "plan_values",
+      "file": "src/settings/plan.rs",
+      "line": 38
+    },
+    {
+      "name": "plan_rules",
+      "file": "src/settings/plan.rs",
+      "line": 105
+    },
+    {
+      "name": "plan_hooks",
+      "file": "src/settings/plan.rs",
+      "line": 196
+    }
+  ]
+}

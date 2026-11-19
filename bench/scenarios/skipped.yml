@@ -1,0 +1,13 @@
+name: ci
+on: [push]
+jobs:
+  test:
+    if: ${{ false }}
+    runs-on: contract
+    steps:
+      - run: echo "never runs"
+  deploy:
+    if: ${{ false }}
+    runs-on: contract
+    steps:
+      - run: echo "never runs"

@@ -1,0 +1,8 @@
+# The Woodpecker build the contract tests run beside one forge: version, HTTP
+# port, gRPC port (agents only, never published), the forge it is paired
+# with (a name from forges.txt), and the SHA-256 of the server's and the
+# agent's linux-amd64 and linux-arm64 .tar.gz, from the release's
+# checksums.txt. provision.sh refuses a download whose checksum doesn't match.
+#
+# kind       version port grpc pair           server-amd64 server-arm64 agent-amd64 agent-arm64
+woodpecker   3.20.1  3110 3111 forgejo-17.0.1 82dd50755bb198943521fa30e788ddd20de8179126d5abf9cb5de43e506e45a2 e9cab800c637a0d690f0475a21a7961f4f91dc7cdd845babf7238c2ef71bfcdf cb8cf9028cde5a8eaf8612e9aec59a3e8636c1b2ab8d339cfafb770ebba5e3d8 ac62b815257cb6b90f487366607bc918eb99221082a695fc39135496d4c49b28

@@ -1,0 +1,9 @@
+name: ci
+on: [push]
+jobs:
+  test:
+    runs-on: contract
+    steps:
+      - run: |
+          echo "FAIL: test_checkout_flow (assertion: total == 30, got 31)"
+          exit 1

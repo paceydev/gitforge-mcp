@@ -1,0 +1,13 @@
+# The forge builds the contract tests run against: kind, version, HTTP port,
+# and the SHA-256 of the release's linux-amd64 and linux-arm64 .xz binaries
+# (from the .sha256 file published beside each one). provision.sh refuses a
+# download whose checksum doesn't match.
+#
+# Gitea 1.25 is the first with Actions run and job endpoints; v28 the first
+# with cancel. Forgejo 15 is the first with runner listing, 16 adds jobs,
+# logs and cancel, 17 adds rerun.
+gitea   1.25.5  3101  f4065f3696a163378c96b3cb32c90b68e14c626a4dd98d965b0bc1f8ca2f95eb  87c8029b4b5cbf0d410a3ff6023e07f161bd63c1981e0aaee11416bb31df347d
+gitea   28.3.0  3102  34e2e09e2fb1785def4f4802088d17c0c77eec32d1acf997e8463e2e428cce56  c11d54a5e07ad47e5f84aa4e169d6645542fdea56943fd7e1176602db0c5a076
+forgejo 15.0.11 3103  7328daf77cec27e17c9a34ed5d87cae690384b6d5e06bf831281c750c87303e0  3b6eea1c35c5545830a871c29c86711b3f6c0cb857984b8ac65c1e2942654f92
+forgejo 16.0.7  3104  d5312625899665bbf269b1e30788f454d9806973ecedcdbd3af1e4daa8601b66  02b6f2c2838ea435d7d91de93e7f91cfe3fbf2f13f6af476b6abb8c3f89e35f0
+forgejo 17.0.1  3105  fa6220dbe362cd6cbbf3afe14365c934b4673a7c5f217e3c98f3c05040dccba7  f615b9d8d24e685f30d96a21c1c34900a2016961bbf37b5e883e0354a3d535d6

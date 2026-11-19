@@ -1,0 +1,23 @@
+[book]
+title = "gitforge-mcp"
+description = "An MCP server for CI, pull requests and repository settings on Gitea, Forgejo and GitHub."
+language = "en"
+src = "src"
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[output.html]
+default-theme = "light"
+preferred-dark-theme = "navy"
+additional-css = ["theme/extra.css"]
+no-section-label = true
+smart-punctuation = true
+
+[output.html.search]
+enable = true
+
+# The pages as markdown, with includes expanded: scripts/docs/build.sh
+# turns these into llms.txt, llms-full.txt and a .md beside each page.
+[output.markdown]

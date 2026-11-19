@@ -1,0 +1,25 @@
+# The workflow every contract forge runs: one job of each outcome, so the
+# tests can check what ci_status, ci_logs and ci_runners report for each.
+name: contract
+on: [push]
+jobs:
+  passes:
+    runs-on: contract
+    steps:
+      - run: echo "contract-pass-marker"
+  fails:
+    runs-on: contract
+    steps:
+      - run: |
+          echo "contract-fail-marker: this job fails on purpose"
+          exit 3
+  skipped:
+    if: ${{ false }}
+    runs-on: contract
+    steps:
+      - run: echo "never runs"
+  after:
+    needs: passes
+    runs-on: contract
+    steps:
+      - run: echo "contract-after-marker"

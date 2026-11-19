@@ -1,0 +1,151 @@
+{
+  "result_instruction": "When you're done, end your reply with exactly one line in this form, with nothing after it:\nRESULT: {json}\nwhere {json} is a single-line JSON object shaped like: ",
+  "tasks": [
+    {
+      "id": "T1",
+      "repo": "bench-green",
+      "prompt": "Did CI pass for my latest commit?",
+      "shape": "{\"verdict\": \"pass\" | \"fail\" | \"not_finished\" | \"other\", \"explanation\": \"...\"}",
+      "grade": {
+        "field": "verdict",
+        "correct": [
+          "pass"
+        ]
+      }
+    },
+    {
+      "id": "T2",
+      "repo": "bench-red",
+      "prompt": "Did CI pass for my latest commit?",
+      "shape": "{\"verdict\": \"pass\" | \"fail\" | \"not_finished\" | \"other\", \"explanation\": \"...\"}",
+      "grade": {
+        "field": "verdict",
+        "correct": [
+          "fail"
+        ]
+      },
+      "false_green": {
+        "field": "verdict",
+        "value": "pass"
+      }
+    },
+    {
+      "id": "T3",
+      "repo": "bench-skipped",
+      "prompt": "Did CI pass for my latest commit?",
+      "shape": "{\"verdict\": \"pass\" | \"fail\" | \"not_finished\" | \"other\", \"explanation\": \"...\"}",
+      "grade": {
+        "field": "verdict",
+        "correct": [
+          "fail",
+          "other"
+        ],
+        "and_matches": {
+          "explanation": "skip|nothing ran|did ?n[o']t run|no jobs? ran|never ran"
+        }
+      },
+      "false_green": {
+        "field": "verdict",
+        "value": "pass"
+      }
+    },
+    {
+      "id": "T4",
+      "repo": "bench-queued",
+      "prompt": "Did CI pass for my latest commit?",
+      "shape": "{\"verdict\": \"pass\" | \"fail\" | \"not_finished\" | \"other\", \"explanation\": \"...\"}",
+      "grade": {
+        "field": "verdict",
+        "correct": [
+          "not_finished"
+        ]
+      },
+      "false_green": {
+        "field": "verdict",
+        "value": "pass"
+      }
+    },
+    {
+      "id": "T5",
+      "repo": "bench-red",
+      "prompt": "Why did CI fail for my latest commit?",
+      "shape": "{\"cause\": \"the error message from the log, quoted exactly\"}",
+      "grade": {
+        "field": "cause",
+        "matches": "E-WIDGET-4471"
+      },
+      "grade_on": {
+        "forgejo-15": {
+          "field": "cause",
+          "matches": "E-WIDGET-4471|(no|not|n't|unavailable|without).{0,40}(log|api)|(log|api).{0,40}(no|not|n't|unavailable)"
+        }
+      },
+      "grade_on_note": "Forgejo 15 has no log API: saying the log can't be read is right there, and so is the true error, which an agent can work out from the workflow's source."
+    },
+    {
+      "id": "T6",
+      "repo": "bench-renumbered",
+      "prompt": "Did CI run #{renumbered_run} pass?",
+      "shape": "{\"verdict\": \"pass\" | \"fail\" | \"not_finished\" | \"other\", \"explanation\": \"...\"}",
+      "grade": {
+        "field": "verdict",
+        "correct": [
+          "fail"
+        ]
+      },
+      "false_green": {
+        "field": "verdict",
+        "value": "pass"
+      }
+    },
+    {
+      "id": "T7",
+      "repo": "bench-queued",
+      "prompt": "The gpu job in my latest commit's CI hasn't started. Why?",
+      "shape": "{\"reason\": \"...\"}",
+      "grade": {
+        "field": "reason",
+        "matches": "(?s)(?=.*runner)(?=.*gpu)(?=.*(\\bno\\b|\\bnone\\b|\\bnot\\b|n't|missing|lack|without|zero|\\b0\\b|\\bonly\\b))"
+      }
+    },
+    {
+      "id": "T8",
+      "repo": "bench-pr-red",
+      "prompt": "Is pull request #1 ready to merge?",
+      "shape": "{\"ready\": true | false, \"blockers\": [\"...\"]}",
+      "grade": {
+        "field": "ready",
+        "correct": [
+          false
+        ],
+        "and_matches": {
+          "blockers": "ci|fail|check|test|build"
+        }
+      },
+      "false_green": {
+        "field": "ready",
+        "value": true
+      }
+    },
+    {
+      "id": "T9",
+      "repo": "bench-pr-conflict",
+      "prompt": "Is pull request #1 ready to merge?",
+      "shape": "{\"ready\": true | false, \"blockers\": [\"...\"]}",
+      "grade": {
+        "field": "ready",
+        "correct": [
+          false
+        ],
+        "and_matches": {
+          "blockers": "conflict"
+        }
+      },
+      "false_green": {
+        "field": "ready",
+        "value": true
+      }
+    }
+  ],
+  "false_green_note": "A false green is an answer that says all is well when it isn't: CI passed, or a pull request is ready. It is the failure that matters most."
+}

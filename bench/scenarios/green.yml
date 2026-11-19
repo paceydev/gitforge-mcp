@@ -1,0 +1,11 @@
+name: ci
+on: [push]
+jobs:
+  lint:
+    runs-on: contract
+    steps:
+      - run: echo "lint ok"
+  test:
+    runs-on: contract
+    steps:
+      - run: echo "42 tests passed"

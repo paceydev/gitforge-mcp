@@ -1,0 +1,29 @@
+# rustqual configuration. Anything not set here takes rustqual's default;
+# `rustqual --init` in an empty directory prints them all.
+#
+# CI compares against rustqual-baseline.json rather than a fixed score:
+#   rustqual --no-fail --compare rustqual-baseline.json --fail-on-regression
+# (--no-fail is needed: without it any finding at all fails the run.)
+# Refresh the baseline when a change improves the score:
+#   rustqual --save-baseline rustqual-baseline.json
+
+[complexity]
+# 1024 is a unit (KiB), not a tunable. Everything else gets a name.
+allowed_magic_numbers = ["0", "1", "-1", "2", "1024"]
+
+[duplicates]
+# Glob imports here are of enum variants inside the function that matches
+# on them (`use Feature::*;`), which keeps match tables readable. A
+# module-level glob would be worth flagging, but rustqual can't tell them
+# apart.
+detect_wildcard_imports = false
+
+[boilerplate]
+# Hand-written one-line Display impls are the house style: no derive_more.
+accepted_display_idioms = ["write_str", "write_macro"]
+
+[tests]
+# Test files hold many scenarios against one fake forge, and a scenario
+# reads best top to bottom. Long is fine; very long is still flagged.
+max_function_lines = 100
+file_length = 1200

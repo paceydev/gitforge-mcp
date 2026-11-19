@@ -1,0 +1,14 @@
+# Runs 4, 9 and 11 fail; every other run passes. Run ids are numbered across
+# the whole forge, so this repository's run numbers and ids differ, and the
+# seeding picks a run number whose result differs from the run with that id.
+name: ci
+on: [push]
+jobs:
+  test:
+    runs-on: contract
+    steps:
+      - run: |
+          case "${{ github.run_number }}" in
+            4|9|11) echo "run ${{ github.run_number }}: failing"; exit 1 ;;
+          esac
+          echo "run ${{ github.run_number }}: ok"

@@ -1,0 +1,9 @@
+# The Jenkins build the contract tests run beside one forge: its LTS version,
+# HTTP port, the forge it is paired with (a name from forges.txt), the
+# SHA-256 of jenkins.war (get.jenkins.io/war-stable/<version>/jenkins.war.sha256),
+# and the Temurin JRE it runs on: its release, and the SHA-256 of its
+# linux x64 and aarch64 .tar.gz (api.adoptium.net). provision.sh refuses a
+# download whose checksum doesn't match.
+#
+# kind    version  port pair           war-sha256                                                       jre-release    jre-amd64                                                        jre-arm64
+jenkins   2.580.2  3112 forgejo-17.0.1 d98032d2401c540a35613a82ed358921fcf3166d5e6eaaaf60a7941845be3251 jdk-21.0.13+9  a535a1df9c6284d9618872984e026ae0352d1f7e9e0605425c0e6114f47351dd b1734db7ade49c3f6acc6ae06233b8c2dd90e3e2f00f67000ae1c972aaa64d8c

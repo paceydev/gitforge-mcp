@@ -1,0 +1,45 @@
+[package]
+name = "gitforge-mcp"
+version = "0.2.0"
+edition = "2024"
+rust-version = "1.89"
+description = "An MCP server for CI, pull requests and repository settings on Gitea, Forgejo and GitHub"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["mcp", "gitea", "forgejo", "ci", "github"]
+categories = ["command-line-utilities", "development-tools"]
+# Not on crates.io until it has been proven in use; see the README's status.
+publish = false
+
+[dependencies]
+anyhow = "1.0.104"
+base64 = "0.23.1"
+chrono = { version = "0.4.45", default-features = false, features = ["std", "clock"] }
+clap = { version = "4.6.7", features = ["derive", "env"] }
+dirs = "7.0.0"
+keyring = "4.2.0"
+regex = "1.13.1"
+reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls", "http2", "charset", "system-proxy"] }
+rmcp = { version = "3.8", features = ["server", "transport-io", "macros"] }
+rpassword = "7.5.4"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+thiserror = "2.0.21"
+tokio = { version = "1.54.1", features = ["rt-multi-thread", "macros", "io-std", "process", "sync", "time"] }
+tokio-util = "0.7.20"
+toml = "1.1.8"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
+url = { version = "2.5.8", features = ["serde"] }
+
+[dev-dependencies]
+rmcp = { version = "3.8", features = ["client", "transport-child-process"] }
+tempfile = "3.27.0"
+wiremock = "0.6.5"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+dbg_macro = "warn"
+todo = "warn"

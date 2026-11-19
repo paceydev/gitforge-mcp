@@ -1,0 +1,4 @@
+{
+  "name": "forge-ci",
+  "description": "Gitea and Forgejo CI status, logs, runners and pull requests through a helper script (the benchmark's hardened skill arm)."
+}

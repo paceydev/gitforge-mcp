@@ -1,0 +1,25 @@
+{
+ "workflow_runs": [
+  {
+   "id": 387,
+   "title": "Change for run 19",
+   "workflow_id": "ci.yml",
+   "index_in_repo": 19,
+   "prettyref": "#2",
+   "commit_sha": "0b4ed9815b7780b26e6b6c35133fb07cd4799089",
+   "event": "pull_request",
+   "status": "success"
+  },
+  {
+   "id": 379,
+   "title": "Change for run 17",
+   "workflow_id": "ci.yml",
+   "index_in_repo": 17,
+   "prettyref": "develop",
+   "commit_sha": "0b4ed9815b7780b26e6b6c35133fb07cd4799089",
+   "event": "push",
+   "status": "success"
+  }
+ ],
+ "total_count": 2
+}

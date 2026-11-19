@@ -1,0 +1,18 @@
+# `gpu` asks for a runner label no runner has, so it waits forever with no
+# runner task; `package` waits behind it.
+name: ci
+on: [push]
+jobs:
+  build:
+    runs-on: contract
+    steps:
+      - run: echo "build ok"
+  gpu:
+    runs-on: gpu
+    steps:
+      - run: echo "gpu tests"
+  package:
+    needs: gpu
+    runs-on: contract
+    steps:
+      - run: echo "package"

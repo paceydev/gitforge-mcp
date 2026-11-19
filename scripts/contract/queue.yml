@@ -1,0 +1,14 @@
+# Pushed to queue-a and queue-b. `hold` holds the instance's one `shared`
+# runner, so the contract tests see one repository's job running on it while
+# the other's waits; `stranded` asks for a runner nobody has.
+name: queue
+on: [push]
+jobs:
+  hold:
+    runs-on: shared
+    steps:
+      - run: sleep 3600
+  stranded:
+    runs-on: no-such-runner
+    steps:
+      - run: echo never
