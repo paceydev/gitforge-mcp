@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, 'feat/**', 'codex/**']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: '0'
+  CARGO_PROFILE_DEV_DEBUG: line-tables-only
+
+jobs:
+  quality:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.89.0 --profile minimal --component rustfmt,clippy
+      - run: cargo +1.89.0 fmt --check
+      - run: cargo +1.89.0 clippy --locked --all-targets -- -D warnings
+      - run: scripts/check-clean.sh
+      - name: Credential scan
+        run: |
+          python3 -m venv /tmp/secret-scan
+          /tmp/secret-scan/bin/pip install detect-secrets==1.5.0
+          git ls-files -z | xargs -0 /tmp/secret-scan/bin/detect-secrets-hook --baseline .secrets.baseline --exclude-files '^[.]secrets[.]baseline$'
+      - name: Dependency advisories
+        run: |
+          rustup toolchain install stable --profile minimal
+          cargo +stable install cargo-audit --version 0.22.2 --locked
+          cargo +stable audit
+      - name: Quality baseline
+        run: |
+          rustup toolchain install 1.98.1 --profile minimal
+          cargo +1.98.1 install rustqual --version 1.8.3 --locked
+          rustqual --no-fail --compare rustqual-baseline.json --fail-on-regression
+
+  native:
+    name: native (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+          - runner: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+          - runner: windows-2022
+            target: x86_64-pc-windows-msvc
+          - runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 45
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.89.0 --profile minimal --target '${{ matrix.target }}'
+      - run: cargo +1.89.0 test --locked --target '${{ matrix.target }}'
+      - run: cargo +1.89.0 build --release --locked --target '${{ matrix.target }}'
+      - run: python3 scripts/release/package.py '${{ matrix.target }}'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: binary-${{ matrix.target }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+  docs:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.89.0 --profile minimal
+      - run: cargo +1.89.0 install mdbook --version 0.5.4 --locked
+      - run: scripts/docs/build.sh
+
+  contracts:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: rustup toolchain install 1.89.0 --profile minimal
+      - name: Real forge and provider contracts
+        env:
+          RUSTUP_TOOLCHAIN: 1.89.0
+        run: scripts/contract/run-local.sh
+
+  gate:
+    if: always()
+    needs: [quality, native, docs, contracts]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: All required jobs passed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          results = json.loads(os.environ['RESULTS'])
+          failed = [name for name, job in results.items() if job['result'] != 'success']
+          if failed:
+              raise SystemExit('Required jobs did not pass: ' + ', '.join(failed))
+          PY
