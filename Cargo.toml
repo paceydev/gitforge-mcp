@@ -1,15 +1,32 @@
 [package]
 name = "gitforge-mcp"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2024"
 rust-version = "1.89"
 description = "An MCP server for CI, pull requests and repository settings on Gitea, Forgejo and GitHub"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
+repository = "https://github.com/paceydev/gitforge-mcp"
+homepage = "https://github.com/paceydev/gitforge-mcp"
+documentation = "https://github.com/paceydev/gitforge-mcp/tree/main/docs/src"
 keywords = ["mcp", "gitea", "forgejo", "ci", "github"]
 categories = ["command-line-utilities", "development-tools"]
-# Not on crates.io until it has been proven in use; see the README's status.
-publish = false
+publish = ["crates-io"]
+include = [
+    "/src/**",
+    "/tests/**",
+    "/docs/src/**",
+    "/docs/book.toml",
+    "/bench/README.md",
+    "/Cargo.toml",
+    "/Cargo.lock",
+    "/README.md",
+    "/CHANGELOG.md",
+    "/CONTRIBUTING.md",
+    "/SECURITY.md",
+    "/LICENSE-APACHE",
+    "/LICENSE-MIT",
+]
 
 [dependencies]
 anyhow = "1.0.104"
@@ -28,13 +45,14 @@ thiserror = "2.0.21"
 tokio = { version = "1.54.1", features = ["rt-multi-thread", "macros", "io-std", "process", "sync", "time"] }
 tokio-util = "0.7.20"
 toml = "1.1.8"
+toml_edit = "0.25.17"
+tempfile = "3.27.0"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
 url = { version = "2.5.8", features = ["serde"] }
 
 [dev-dependencies]
 rmcp = { version = "3.9", features = ["client", "transport-child-process"] }
-tempfile = "3.27.0"
 wiremock = "0.6.5"
 
 [lints.rust]

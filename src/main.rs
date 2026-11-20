@@ -51,6 +51,15 @@ enum Command {
     Serve,
     /// Print what forge_context would report for this repository, as JSON.
     Context,
+    /// Guide client setup, check credentials and test the forge connection.
+    Init {
+        /// Client to configure; otherwise ask interactively. `none` checks only.
+        #[arg(long, value_enum)]
+        client: Option<gitforge_mcp::init::Client>,
+        /// Preview setup without writing client configuration or storing a token.
+        #[arg(long)]
+        dry_run: bool,
+    },
     /// Run one tool and print its result as JSON, without an agent:
     /// `gitforge-mcp call ci_status '{"run": 12}'`.
     Call {
@@ -149,6 +158,15 @@ async fn main() -> ExitCode {
     let result = match cli.command.unwrap_or(Command::Serve) {
         Command::Serve => serve(&cli.target).await,
         Command::Context => print_context(&cli.target).await,
+        Command::Init { client, dry_run } => {
+            gitforge_mcp::init::run(
+                options(&cli.target),
+                client,
+                dry_run,
+                cli.target.config.is_some(),
+            )
+            .await
+        }
         Command::Call { tool, args } => call(&cli.target, &tool, &args).await,
         Command::Wait {
             sha,

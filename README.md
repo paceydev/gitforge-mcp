@@ -6,11 +6,19 @@ It works with the Git checkout you open in your agent, detects the forge and its
 
 ## Installation
 
+On macOS, install with [Homebrew](https://brew.sh):
+
+```sh
+brew install paceydev/tap/gitforge-mcp
+```
+
+The [paceydev tap](https://github.com/paceydev/homebrew-tap) installs a prebuilt binary for Apple Silicon or Intel. It also supports Linux ARM64 and x64 with glibc 2.35 or later. Update with `brew update` followed by `brew upgrade paceydev/tap/gitforge-mcp`.
+
 Download a binary for macOS, Linux or Windows from the [latest release](https://github.com/paceydev/gitforge-mcp/releases/latest). Builds are available for x64 and ARM64 on all three systems. Git must be installed to discover the checkout and its remote.
 
 | System | Install |
 |---|---|
-| macOS | Download the ZIP for Apple Silicon (`aarch64`) or Intel (`x86_64`), extract it, and place `gitforge-mcp` on your PATH. |
+| macOS | Use Homebrew above, or download and extract the ZIP for Apple Silicon (`aarch64`) or Intel (`x86_64`). |
 | Windows | Download the ZIP for x64 (`x86_64`) or ARM64 (`aarch64`), extract it, and add the directory containing `gitforge-mcp.exe` to your PATH. |
 | Linux | Use the installer below, or extract a release archive. The binaries require glibc 2.35 or later. |
 
@@ -18,12 +26,12 @@ Download a binary for macOS, Linux or Windows from the [latest release](https://
 curl --proto '=https' --tlsv1.2 -fsSL https://raw.githubusercontent.com/paceydev/gitforge-mcp/v0.2.0/install.sh | sh
 ```
 
-The Linux installer verifies the archive checksum and installs into `~/.local/bin`. Homebrew installation is planned. The first release binaries are unsigned; [installation details](docs/src/guide/getting-started.md) explain checksums, attestations and platform security prompts.
+The Linux installer verifies the archive checksum and installs into `~/.local/bin`. The first release binaries are unsigned; [installation details](docs/src/guide/getting-started.md) explain checksums, attestations and platform security prompts.
 
-To build from source, install Rust 1.89 or later, then run:
+To install 0.2.1 from crates.io, install Rust 1.89 or later, then run:
 
 ```sh
-cargo install --locked --git https://github.com/paceydev/gitforge-mcp --tag v0.2.0 gitforge-mcp
+cargo install gitforge-mcp --locked --version 0.2.1
 ```
 
 Check the installation:
@@ -32,9 +40,19 @@ Check the installation:
 gitforge-mcp --version
 ```
 
-A source install puts the executable in Cargo's binary directory. Ensure the installation directory is on your PATH. Desktop MCP clients may need the executable's full path.
+A source install puts the executable in Cargo's binary directory. Ensure the installation directory is on your PATH. Desktop MCP clients may need the executable's full path; see [client setup](docs/src/guide/getting-started.md#connect-it-to-your-agent) for Homebrew paths.
 
 ## Quick start
+
+With 0.2.1 or later, run this inside your checkout:
+
+```sh
+gitforge-mcp init
+```
+
+It checks the forge connection and credentials, lets you choose Claude Code, Codex or both, and shows proposed user-level settings before asking to save them. Preview with `gitforge-mcp init --dry-run`.
+
+The GitHub binaries and Homebrew tap currently provide 0.2.0, which uses the manual instructions below. The crates.io source package provides 0.2.1 with guided setup.
 
 ### Claude Code
 

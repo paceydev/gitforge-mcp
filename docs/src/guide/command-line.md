@@ -11,6 +11,38 @@ command's name.
 With no command (or `serve`), it serves MCP over stdio. This is what agents
 run. stdout carries the protocol, and logs go to stderr.
 
+## `gitforge-mcp init`
+
+Available in 0.2.1 and later. Version 0.2.0 uses the manual client setup in [Getting started](getting-started.md).
+
+Guides setup for Claude Code, Codex, both, or a connection check only:
+
+```sh
+gitforge-mcp init
+```
+
+It detects the checkout and forge, reports the credential source without printing the credential, and checks repository access with a fresh, read-only request. It does not use or update cached probes. If no credential is found, it explains API authentication and can offer to store a hidden-input token in the OS keyring before retesting. SSH Git access alone does not authenticate API requests.
+
+The client menu writes user-level `gitforge` entries in Claude Code's `~/.claude.json` and Codex's `~/.codex/config.toml`. `CLAUDE_CONFIG_DIR` and `CODEX_HOME` override these locations. The executable path and arguments are shown before a separate confirmation for each file; the default answer is no. Tokens are never placed in client configuration. Existing server environment, enablement, other servers and unrelated settings are preserved. Existing command/arguments are replaced by the preview; an entry using another transport must be handled manually. Codex comments are retained; Claude JSON formatting may change.
+
+Existing changed files get a private backup beside them before atomic replacement. The backup path is printed. A configuration file edited after the preview is refused; rerun setup to review the new state. Stop clients while changing configuration to avoid concurrent edits. Unchanged entries are not rewritten.
+
+Setup uses the stable invoked executable path when possible, including Homebrew's prefix symlink. It does not pin `--dir` into user-level configuration: each opened checkout supplies the repository. Explicit `--config`, `--remote` and `--read-only` settings are included in the proposed arguments. Desktop clients may have different credentials or environment variables; restart the client and ask it to call `forge_context` to verify its own session.
+
+| Option | Meaning |
+|---|---|
+| `--client claude` | Configure Claude Code without the client menu. |
+| `--client codex` | Configure Codex without the client menu. |
+| `--client both` | Configure both, confirming each file separately. |
+| `--client none` | Check the connection without client configuration. |
+| `--dry-run` | Preview without changing client files or keyring; defaults to both clients. |
+
+```sh
+gitforge-mcp init --dry-run --client both
+```
+
+Without `--dry-run`, setup requires an interactive terminal and refuses redirected input. Exit 0 means fresh repository access was verified, including anonymous access to public repositories; it does not claim writes are permitted or that every selected client was changed. Unbound, unreachable, timed-out or failed checks exit 1. A declined configuration is explicitly reported as skipped.
+
 ## `gitforge-mcp config`
 
 Shows every setting and where it came from: an option, an environment
