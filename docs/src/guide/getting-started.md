@@ -4,7 +4,7 @@ Install gitforge-mcp, connect it to your agent, and check that it can see your f
 
 ## Install
 
-Download the archive for your system and architecture from [GitHub Releases](https://github.com/paceydev/gitforge-mcp/releases/latest). Git is required to read the checkout and its remote.
+Use Homebrew on macOS or Linux, or download the archive for your system and architecture from [GitHub Releases](https://github.com/paceydev/gitforge-mcp/releases/latest). Git is required to read the checkout and its remote.
 
 | System | Architecture | Archive target |
 |---|---|---|
@@ -17,7 +17,32 @@ Download the archive for your system and architecture from [GitHub Releases](htt
 
 Each filename starts with `gitforge-mcp-<version>-`. Native CI builds and tests each target. The first release has no Apple or Windows publisher signature. macOS Gatekeeper, Windows SmartScreen and managed-device policies may restrict execution. Signing and native installers are planned.
 
-### macOS
+### Homebrew (macOS and Linux)
+
+```sh
+brew install paceydev/tap/gitforge-mcp
+```
+
+The [paceydev tap](https://github.com/paceydev/homebrew-tap) installs prebuilt ARM64 or x64 binaries without a Rust compiler. Homebrew verifies the archive's pinned SHA-256 checksum. Linux requires glibc 2.35 or later; Alpine/musl is unsupported. The macOS binaries remain unsigned by an Apple Developer ID.
+
+Upgrade with:
+
+```sh
+brew update
+brew upgrade paceydev/tap/gitforge-mcp
+```
+
+Find the executable's full path for your MCP client:
+
+```sh
+echo "$(brew --prefix)/bin/gitforge-mcp"
+```
+
+The usual paths are `/opt/homebrew/bin/gitforge-mcp` on Apple Silicon, `/usr/local/bin/gitforge-mcp` on Intel Macs, and `/home/linuxbrew/.linuxbrew/bin/gitforge-mcp` on Linux. Use the path printed above if your Homebrew prefix differs. Use the `bin` path under the Homebrew prefix rather than a versioned Cellar path so client configuration survives upgrades.
+
+If you previously installed with Cargo or copied a binary onto your PATH, check for multiple copies with `type -a gitforge-mcp`. Update any absolute paths in your clients before removing the old installation. `cargo uninstall gitforge-mcp` removes a Cargo-managed installation. Restart connected clients after switching installations or upgrading.
+
+### macOS ZIP
 
 Extract the ZIP for your Mac, then install the executable into a directory on your PATH. For Apple Silicon and version 0.2.0:
 
@@ -27,7 +52,7 @@ mkdir -p "$HOME/.local/bin"
 install -m 755 gitforge-mcp-0.2.0-aarch64-apple-darwin/gitforge-mcp "$HOME/.local/bin/gitforge-mcp"
 ```
 
-Use the `x86_64-apple-darwin` archive on Intel. Homebrew installation is planned.
+Use the `x86_64-apple-darwin` archive on Intel.
 
 ### Linux
 
@@ -75,10 +100,10 @@ Each release also includes the attestation bundle as `attestation.json`.
 
 ### From source
 
-Requires Rust 1.89 or later:
+The crates.io package provides 0.2.1 with guided setup. The current GitHub archives and Homebrew tap provide 0.2.0 until their next release. Requires Rust 1.89 or later:
 
 ```sh
-cargo install --locked --git https://github.com/paceydev/gitforge-mcp --tag v0.2.0 gitforge-mcp
+cargo install gitforge-mcp --locked --version 0.2.1
 ```
 
 Or, from a clone:
@@ -99,6 +124,16 @@ The server works on the repository in the directory it's started in. Agents
 start MCP servers in the project you opened, so normally there's nothing to
 configure. If yours doesn't, pass `--dir <path>` or set `GITFORGE_MCP_DIR`.
 
+### Guided setup
+
+`gitforge-mcp init` is available in 0.2.1 and later. If you installed the 0.2.0 binary, use the manual instructions below.
+
+```sh
+gitforge-mcp init
+```
+
+Run it from a checkout to check the forge connection and credentials, then select Claude Code, Codex or both. It shows the executable path and proposed user-level settings and asks before changing each file. Existing settings are kept, and changed files receive a backup. Tokens can be stored in the OS keyring; they are not copied into client settings. Use `gitforge-mcp init --dry-run` for a preview without changes. See the [command reference](command-line.md#gitforge-mcp-init) for options and exit codes.
+
 ### Claude Code
 
 For every project, or for one project:
@@ -117,7 +152,13 @@ clones it gets the server too.
 An agent started from a desktop app rather than a terminal may not see
 your shell's `PATH`, so it can't find `gitforge-mcp`. If `claude mcp list`
 or `forge_context` shows the server failing to start, give the full path
-instead: `"$HOME/.cargo/bin/gitforge-mcp"` (on Windows,
+instead. For Homebrew, register the path under its prefix:
+
+```sh
+claude mcp add --scope user gitforge -- "$(brew --prefix)/bin/gitforge-mcp"
+```
+
+For a Cargo install, use `"$HOME/.cargo/bin/gitforge-mcp"` (on Windows,
 `%USERPROFILE%\.cargo\bin\gitforge-mcp.exe`).
 
 ### Codex
@@ -128,6 +169,15 @@ In `~/.codex/config.toml`:
 [mcp_servers.gitforge]
 command = "gitforge-mcp"
 ```
+
+If Codex cannot find the executable on PATH, use its full path. For example, with Homebrew on an Apple Silicon Mac:
+
+```toml
+[mcp_servers.gitforge]
+command = "/opt/homebrew/bin/gitforge-mcp"
+```
+
+Use the path from `echo "$(brew --prefix)/bin/gitforge-mcp"` for other Homebrew prefixes. Restart Codex after changing the server configuration.
 
 ### Other MCP clients
 

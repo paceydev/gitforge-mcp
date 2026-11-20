@@ -36,6 +36,11 @@ pub struct Cache {
 }
 
 impl Cache {
+    /// Probe without reading or writing cached state (for setup diagnostics).
+    pub fn disabled() -> Self {
+        Self { path: None }
+    }
+
     pub fn default_location() -> Self {
         let path = std::env::var_os(CACHE_ENV)
             .map(PathBuf::from)

@@ -6,6 +6,18 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-11-20
+
+### Added
+
+- `gitforge-mcp init` guides Claude Code and Codex setup, checks credentials and fresh repository access, previews and confirms client configuration changes, and retains private backups. `--dry-run` previews without writing configuration or storing credentials.
+- Crates.io package metadata and a focused source archive for the 0.2.1 release.
+- Homebrew installation and upgrade instructions for macOS and Linux, including desktop MCP client paths and switching from a Cargo installation.
+
+### Changed
+
+- Documentation-only pushes and pull requests build documentation and scan credentials, while source/configuration changes, tags and manual runs retain the full CI suite. The required gate checks the expected route.
+
 ## [0.2.0] - 2026-11-19
 
 First public release, with native archives for macOS, Linux and Windows on x64 and ARM64, SHA-256 checksums and GitHub build attestations. Platform publisher signing is planned.

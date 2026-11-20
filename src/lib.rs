@@ -12,6 +12,7 @@ pub mod estimate;
 pub mod external;
 pub mod forge;
 pub mod history;
+pub mod init;
 pub mod logs;
 pub mod pulls;
 pub mod remote;
