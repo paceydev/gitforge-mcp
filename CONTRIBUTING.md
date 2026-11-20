@@ -42,6 +42,8 @@ To test against another forge release, add a line to
 The minimum supported Rust version is in `Cargo.toml` (`rust-version`), and
 CI builds with exactly that version.
 
+Documentation-only pushes and pull requests run the documentation build and credential scans. Native builds, Rust quality checks and forge contracts run when any other tracked file changes. Release tags and manual CI runs always run the full suite. The required `gate` check verifies the expected jobs for each route.
+
 ## Fixtures
 
 Recorded API responses used as test fixtures must not contain real host

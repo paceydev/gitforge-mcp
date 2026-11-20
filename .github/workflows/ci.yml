@@ -21,7 +21,37 @@ env:
   CARGO_PROFILE_DEV_DEBUG: line-tables-only
 
 jobs:
+  changes:
+    runs-on: ubuntu-22.04
+    outputs:
+      full: ${{ steps.select.outputs.full }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - run: python3 -m unittest discover -s scripts/ci -p 'test_*.py'
+      - id: select
+        run: python3 scripts/ci/changes.py
+
+  security:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: scripts/check-clean.sh
+      - name: Credential scan
+        run: |
+          python3 -m venv /tmp/secret-scan
+          /tmp/secret-scan/bin/pip install detect-secrets==1.5.0
+          git ls-files -z | xargs -0 /tmp/secret-scan/bin/detect-secrets-hook --baseline .secrets.baseline --exclude-files '^[.]secrets[.]baseline$'
+
   quality:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
+
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     steps:
@@ -31,12 +61,6 @@ jobs:
       - run: rustup toolchain install 1.89.0 --profile minimal --component rustfmt,clippy
       - run: cargo +1.89.0 fmt --check
       - run: cargo +1.89.0 clippy --locked --all-targets -- -D warnings
-      - run: scripts/check-clean.sh
-      - name: Credential scan
-        run: |
-          python3 -m venv /tmp/secret-scan
-          /tmp/secret-scan/bin/pip install detect-secrets==1.5.0
-          git ls-files -z | xargs -0 /tmp/secret-scan/bin/detect-secrets-hook --baseline .secrets.baseline --exclude-files '^[.]secrets[.]baseline$'
       - name: Dependency advisories
         run: |
           rustup toolchain install stable --profile minimal
@@ -49,6 +73,8 @@ jobs:
           rustqual --no-fail --compare rustqual-baseline.json --fail-on-regression
 
   native:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     name: native (${{ matrix.target }})
     strategy:
       fail-fast: false
@@ -100,6 +126,8 @@ jobs:
       - run: scripts/docs/build.sh
 
   contracts:
+    needs: changes
+    if: needs.changes.outputs.full == 'true'
     runs-on: ubuntu-22.04
     timeout-minutes: 60
     steps:
@@ -114,7 +142,7 @@ jobs:
 
   gate:
     if: always()
-    needs: [quality, native, docs, contracts]
+    needs: [changes, security, quality, native, docs, contracts]
     runs-on: ubuntu-22.04
     steps:
       - name: All required jobs passed
@@ -124,7 +152,14 @@ jobs:
           python3 - <<'PY'
           import json, os
           results = json.loads(os.environ['RESULTS'])
-          failed = [name for name, job in results.items() if job['result'] != 'success']
+          full = results['changes']['outputs'].get('full')
+          if full not in ('true', 'false'):
+              raise SystemExit('CI routing did not report a valid decision')
+          required = ('changes', 'security', 'docs')
+          heavy = ('quality', 'native', 'contracts')
+          expected = {name: 'success' for name in required}
+          expected.update({name: 'success' if full == 'true' else 'skipped' for name in heavy})
+          failed = [name for name, state in expected.items() if results[name]['result'] != state]
           if failed:
               raise SystemExit('Required jobs did not pass: ' + ', '.join(failed))
           PY
